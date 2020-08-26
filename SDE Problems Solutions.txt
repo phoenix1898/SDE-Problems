@@ -1,0 +1,709 @@
+SDE Problems Solutions
+Day 1:
+1)Duplicate number in an array
+	
+	//First approach - O(n^2)
+
+		For i in range(len(num)-1):
+			For j in range(i,len(num)):
+				If(nums[i]==num[j]):
+					Return nums[i] 	
+	
+	//Efficient approach: //Tortoise and hare algo
+		
+		def findDuplicate(self, nums: List[int]) -> int:
+        		slow = nums[0]
+        		fast = nums[0]
+        		while(True):
+           		 slow=nums[slow]
+           		 fast = nums[nums[fast]]
+           		 if(slow==fast):
+                			break
+        
+        		slow = nums[0]
+        		while(slow!=fast):
+           		 slow=nums[slow]
+           		 fast = nums[fast]
+        		return fast
+
+
+
+
+
+
+2)	Given an array with n objects colored red, white or blue, sort them in-place so that objects of the same color are adjacent, with the colors in the order red, white and blue.
+Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
+
+
+//Efficient solution:
+
+class Solution:
+    def sortColors(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        low,mid =0,0 
+        high = len(nums)-1 
+        while(mid<=high):
+            if(nums[mid]==0):
+                nums[low],nums[mid] = nums[mid],nums[low]
+                mid+=1 
+                low+=1
+            elif(nums[mid]==2):
+                nums[mid],nums[high]=nums[high],nums[mid] 
+                high-=1
+            else:
+                mid+=1        		
+
+3) Find the missing number in array
+
+
+// First Approach - O(n)
+
+class Solution:
+    def missingNumber(self, nums: List[int]) -> int:
+        s = sum(nums)
+        l = len(nums)
+        return (l*(l+1))//2 - s
+
+
+// Efficient Approach - O(n)
+
+class Solution:
+    def missingNumber(self, nums: List[int]) -> int:
+        ans = len(nums)
+        for i in range(0,len(nums)):
+            ans^=i 
+            ans^=nums[i]
+        return ans
+
+4) Merge two sorted array 
+
+//Efficient solution
+class Solution:
+    def merge(self, nums1: List[int], m: int, nums2: List[int], n: int) -> None:
+        """
+        Do not return anything, modify nums1 in-place instead.
+        """
+        i = m-1 
+        j = n-1 
+        k = m+n-1
+        while(i>=0 and j>=0):
+            if(nums1[i]>nums2[j]):
+                nums1[k] = nums1[i]
+                k-=1 
+                i-=1
+            else:
+                nums1[k] = nums2[j]
+                j-=1 
+                k-=1 
+        while(j>=0):
+            nums1[k] = nums2[j]
+            k-=1 
+            j-=1
+
+
+5) Kadane's Algorithm
+
+//First solution accepted - O(n)
+
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        m=float('-inf')
+        cm=0 
+        for i in nums:
+            cm+=i 
+            if(cm>m):
+                m = cm 
+            if(cm<0):
+                cm = 0 
+        return m
+
+
+6) Merge two overlapped Array
+
+// Efficient solution
+
+class Solution:
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        if(len(intervals)==0 or len(intervals)==1):
+            return intervals
+        intervals.sort()
+        lis = [intervals[0]]
+        for i in range(1,len(intervals)):
+            if(intervals[i][0] <= lis[-1][1]):
+                lis[-1][1]=max(lis[-1][1],intervals[i][1])
+            else:
+                lis.append(intervals[i])
+        return lis
+
+
+Day 2 (actually its 3):
+
+1) Set matrix zeros
+
+// First approach - use row,column marker 
+
+class Solution:
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        row = len(matrix)
+        col = len(matrix[0])
+        rowmark = [0 for i in range(row)]
+        colmark = [0 for i in range(col)]
+        for i in range(row):
+            for j in range(col):
+                if(matrix[i][j]==0):
+                    rowmark[i] = 1 
+                    colmark[j] = 1
+        #print(rowmark,colmark)
+        for i in range(row):
+            if(rowmark[i]==1):
+                for j in range(col):
+                    matrix[i][j] = 0 
+        for j in range(col):
+            if(colmark[j]==1):
+                for i in range(row):
+                    matrix[i][j] = 0 
+        
+// Efficient approach
+
+
+
+
+2)Pascal Triangle
+
+//python efficient
+class Solution:
+    def generate(self, numRows: int) -> List[List[int]]:
+        pascal = [[1]*(i+1) for i in range(numRows)]
+        for i in range(1,numRows):
+            for j in range(1,i):
+                pascal[i][j] = pascal[i-1][j-1]+pascal[i-1][j]
+        return pascal
+
+
+3) Next Permutation
+
+
+// Approach 
+i)Find the decreasing postfix in the list 
+
+ii)swap the before element to the postfix with the next greater element in the postfix 
+
+iii) reverse the postfix 
+
+
+//Efficient approach
+class Solution:
+    def nextPermutation(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        l2 = l1 = l = len(nums)-1 
+        while(l>0 and nums[l-1]>=nums[l]):
+            l-=1
+        if(l==0):
+            nums.reverse()
+            return nums
+        swapos = l-1 
+        l1 = len(nums)-1 
+        while(l1>swapos):
+            if(nums[l1]>nums[swapos]):
+                nums[l1],nums[swapos] = nums[swapos],nums[l1]
+                break
+            l1-=1
+        r = swapos+1 
+        while(r<l2):
+            nums[r],nums[l2] = nums[l2],nums[r]
+            r+=1 
+            l2-=1 
+        
+        return nums
+        
+4)
+5)
+6)
+
+
+
+Day 3)
+1) Excel colunm number 
+class Solution {
+    public int titleToNumber(String s) {
+        int res = 0;
+        for(int i=0;i<s.length();i++)
+        {
+            res = res*26+(s.charAt(i)-64);
+        }
+        return res;
+        
+    }
+}
+
+
+2) Find power in log(n) time 
+
+class Solution:
+    def myPow(self, x: float, n: int) -> float:
+        if(n%2==0):
+            res = x**(n//2)
+            return res*res 
+        else:
+            res = x**(n//2)
+            return res*res*x
+// Practice math excersise
+
+
+
+Day 4)
+3) Longest consequetive sequence (Hard)
+
+// First approach ===> O(nlogn)
+#code
+for _ in range(int(input())):
+    n = int(input())
+    lis = list(map(int,input().split()))
+    lis.sort() 
+    #print(lis)
+    m = 0 
+    ans =1
+    for i in range(n-1):
+        if(lis[i+1]==lis[i]):
+            continue
+        elif(lis[i+1]-1 == lis[i]):
+            ans+=1 
+        else:
+            m = max(ans,m)
+            ans=1 
+    print(max(ans,m))
+	
+// Efficient approach ===> O(n)
+class Solution:
+    def longestConsecutive(self, nums: List[int]) -> int:
+        s = set(nums)
+        print(s)
+        ans = 1
+        m=0
+        for i in s:
+            if(i-1 not in s):
+                t = i 
+                while(t+1 in s):
+                    t+=1 
+                    ans+=1
+                m = max(ans,m)
+                ans =1
+        return m
+
+5)Count number of subarrays with given XOR(this clears a lot of problems 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Day 5) Linked List 
+1) Reverse Linked List
+ 
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        prev = None  
+        while(head!=None):
+            next = head.next 
+            head.next = prev 
+            prev = head 
+            head = next 
+        return prev
+
+2)Middle of linked list 
+// First approach  ====> O(n Log(n))
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def middleNode(self, head: ListNode) -> ListNode:
+        t = head 
+        c = 0 
+        while(t!=None):
+            c+=1 
+            t = t.next 
+        m = (c//2)+1 
+        c=0
+        while(head!=None):
+            c+=1 
+            if(c==m):
+                return head 
+            head = head.next
+			
+//Efficient approach  =====>Log(n)
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def middleNode(self, head: ListNode) -> ListNode:
+        slow = fast = head 
+        while(fast and fast.next):
+            slow = slow.next 
+            fast = fast.next.next 
+        return slow
+		
+3) Merge two sorted linked list 
+//Efficient approach 
+
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        res = temp = ListNode(0)
+        while(l1 and l2):
+            if(l1.val<l2.val):
+                temp.next=l1 
+                l1=l1.next 
+            else:
+                temp.next = l2 
+                l2 = l2.next 
+            temp = temp.next 
+        temp.next = l1 or l2 
+        return res.next
+                
+                
+4) Remove nth node from last 
+
+//Efficient approach 
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        h1 = h2 = res = head
+        while(n>0):
+            h2 = h2.next 
+            n-=1 
+        if(h2==None):
+            return head.next
+        h2 = h2.next
+        while(h2):
+            h1 = h1.next 
+            h2 = h2.next 
+        h1.next = h1.next.next 
+        return res
+
+5)Delete a given node in linkedlist 
+//Easy one 
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def deleteNode(self, node):
+        """
+        :type node: ListNode
+        :rtype: void Do not return anything, modify node in-place instead.
+        """
+        node.val = node.next.val 
+        node.next = node.next.next
+             
+6)Add two linkedlist 
+//First approach
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        res = temp = ListNode(0)
+        num1 =0 
+        num2 =0 
+        i=0
+        while(l1):
+            num1+=(l1.val*(10**i))
+            l1 = l1.next 
+            i+=1  
+        i=0
+        while(l2):
+            num2+=(l2.val*(10**i))
+            l2 = l2.next
+            i+=1
+        ans = num1+num2
+        if(ans==0):
+            return temp
+        while(ans>0):
+            res.next = ListNode(ans%10)
+            res = res.next 
+            ans = ans//10
+        return temp.next                
+
+Day 6)
+1) Find intersection point of two linkedlist 
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        h1 = headA 
+        h2 = headB 
+        if(h1==None or h2==None):
+            return None
+        while(h1!=h2):
+            if(h1==None):
+                h1 = headB 
+            else:
+                h1 = h1.next 
+            if(h2==None):
+                h2 = headA 
+            else:
+                h2 = h2.next 
+        return h1
+    
+            
+        
+            
+2) Palindrome linkedlist 
+
+
+// Find the mid ===> reverse the second half ===> check each halfs 
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def isPalindrome(self, head: ListNode) -> bool:
+        if(head==None):
+            return True
+        slow = fast = head 
+        while(fast and fast.next):
+            slow=slow.next 
+            fast = fast.next.next
+        #slow = slow.next
+        prev = None 
+        #rev = slow
+        while(slow):
+            next = slow.next 
+            slow.next = prev 
+            prev = slow
+            slow = next 
+            
+        while(prev):
+            if(head.val!=prev.val):
+                return False
+            head = head.next 
+            prev = prev.next
+        return True
+3)Rotate linkedlist 
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        c =1 
+        temp = h1 = head 
+        if(head==None):
+            return head
+        while(temp.next!=None):
+            c+=1 
+            temp = temp.next 
+        k=k%c
+        temp.next = head 
+        for i in range(c-k):
+            temp = temp.next 
+        head = temp.next 
+        temp.next = None 
+        return head
+        
+Day 7) 
+// Solved all the problems before except one 
+
+// Traping rain water 
+
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        if(height==[]):
+            return 0
+        l = len(height)
+        leftmax = [0]*l
+        rightmax=[0]*l
+        leftmax[0] = height[0]
+        rightmax[l-1] = height[l-1]
+        for i in range(1,l):
+            leftmax[i] = max(leftmax[i-1],height[i])
+        for j in range(l-2,-1,-1):
+            rightmax[j] = max(rightmax[j+1],height[j])
+        ans=0
+        water = 0
+        for i in range(1,l):
+            water = min(leftmax[i],rightmax[i]) - height[i]
+            if(water>0):
+                ans+=water
+        return ans
+            
+            
+Day 8) Greedy Approach 
+
+1) N meeting in one room and activity selection (same approach) 
+
+#code O(n log(n))
+for _ in range(int(input())):
+    n = int(input())
+    start=[int(i) for i in input().split()]
+    end =[int(j) for j in input().split()]
+    arr = []
+    for i in range(n):
+        arr.append([start[i],end[i],i])
+    arr.sort(key = lambda x : x[1])
+    res = []
+    res.append(arr[0][2]+1)
+    k = 0
+    for i in range(1,n):
+        if(arr[i][0]>=arr[k][1]):
+            res.append(arr[i][2]+1)
+            k = i 
+    print(*res)
+    
+
+
+
+
+4)Fractional Knapsack problem 
+//Efficient approach ===> O(n log n) 
+
+#code
+for _ in range(int(input())):
+    n,bag = map(int,input().split())
+    values = list(map(int,input().split()))
+    profit = []
+    weight =[]
+    for i in range(0,(2*n)-1,2):
+        profit.append(values[i])
+    for i in range(1,(2*n),2):
+        weight.append(values[i])
+    ratios=[]
+    for i in range(n):
+        ratios.append([profit[i]/weight[i],i])
+    ratios.sort(key = lambda s:s[0],reverse=True)
+    total=0
+    for ratio in ratios:
+        if(bag>=weight[ratio[1]]):
+            bag-=weight[ratio[1]]
+            total+=profit[ratio[1]]
+        else:
+            f = bag/weight[ratio[1]]
+            total+=(f*profit[ratio[1]])
+            break
+    print('{:.2f}'.format(total))
+    
+        
+            
+            
+5) Minimum number of platforms required 
+#code
+for _ in range(int(input())):
+    n = int(input())
+    arr = list(map(int,input().split()))
+    dep = list(map(int,input().split()))
+    time = []
+    for i in range(n):
+        time.append([arr[i],0])
+        time.append([dep[i],1])
+
+    time.sort()
+    platform = 0 
+    atcurr = 0 
+    for i in time:
+        if(i[1]==0):
+            atcurr+=1 
+        else:
+            atcurr-=1 
+        platform = max(platform,atcurr)
+    print(platform)
+                
+        
+            
+6) Job sequencing problem 
+#code
+for _ in range(int(input())):
+    n = int(input())
+    lis = list(map(int,input().split()))
+    a = []
+    for i in range(0,len(lis),3):
+        a.append(lis[i:i+3])
+    a.sort(key = lambda x:x[2],reverse=True)
+    job = 0 
+    profit=0
+    m = 0 
+    for i in range(n):
+        m = max(m,a[i][1])
+    #print(a)
+    avail =[0]*(m+1)
+    print(avail)
+    for i in a:
+        p = i[2]
+        d = i[1]
+        while(d>0):
+            if(avail[d]==0):
+                avail[d] = 1 
+                job+=1 
+                profit+=p
+                break 
+            else:
+                d-=1
+    print(job,profit)
+                
+        
+        
